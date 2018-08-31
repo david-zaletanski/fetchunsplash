@@ -6,7 +6,7 @@ A NodeJS command line tool that downloads curated images from Unsplash.
 To install fetchunsplash simply run the following command:
 
 ```sh
-npm iinstall fetchunsplash
+npm install fetchunsplash
 ```
 
 ### Configuration
