@@ -1,0 +1,16 @@
+{
+  "name": "fetchunsplash",
+  "version": "1.0.0",
+  "description": "Grabs a number of recent image(s) from Unsplash.",
+  "author": "David Zaletanski <david.zaletanski@gmail.com>",
+  "main": "fetch-unsplash-img.js",
+  "scripts": {
+    "start": "node fetchunsplash.js"
+  },
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "isomorphic-fetch": "^2.2.1",
+    "optimist": "^0.6.1",
+    "unsplash-js": "^4.8.0"
+  }
+}
