@@ -15,10 +15,9 @@ Unsplash requires registration to use their API. To register and get the necessa
 
 Prior to running fetchunsplash you must either set the following system environment variables to the values provided by Unsplash for your application:
 
- * UNSPLASH_APPID=<required, unsplash_app_id>
- * UNSPLASH_APPSECRET=<required, unsplash_app_secret>
+ * **UNSPLASH_APPID**=<required, unsplash_app_id>
+ * **UNSPLASH_APPSECRET**=<required, unsplash_app_secret>
  * UNSPLASH_CALLBACK=<optional, unused>
-
 
 **OR** place them in a `.env` file in the same directory as `fetchunsplash.js`.
 
