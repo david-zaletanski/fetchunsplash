@@ -26,4 +26,4 @@ crontab -e
 # 0 1 2 3 * = minute (0-59)
 
 # <schedule> <cmd> <arg1> <arg2> ... <argN>
-# 0 0 * * * node /etc/cron.daily/fetchunsplash.js -d /home/chief/Pictures/wallpapers/ -c 24 -s popular
+# 0 0 * * * node /etc/cron.daily/fetchunsplash.sh -d /home/chief/Pictures/wallpapers/ -c 24 -s popular

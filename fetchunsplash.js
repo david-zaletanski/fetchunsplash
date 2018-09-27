@@ -22,6 +22,7 @@
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
+var path = require('path');
 
 // Isomorphic Fetch - Required for Unsplash JS API
 var fetch = require('isomorphic-fetch');
@@ -34,7 +35,7 @@ const toJson = require('unsplash-js').toJson;
 require('dotenv').config();
 
 // Command Line Parsing - https://github.com/substack/node-optimist
-var argv = require('optimist')	
+var argv = require('optimist')
 	.usage('Download curated images from Unsplash.\nUsage: $0')
 	.demand(['d','c']) // enable to require options
 	.alias('d', 'directory')
@@ -44,6 +45,9 @@ var argv = require('optimist')
 	.alias('s', 'sort')
 	.describe('s', 'Sort by [latest,oldest,popular]')
 	.default('s', 'latest')
+	.alias('k', 'skip-dupes')
+	.describe('k', 'Skip Downloading Duplicates')
+	.default('k', false)
 	.boolean('v')
 	.alias('v', 'verbose')
 	.describe('v', 'Enable verbose logging to console')
@@ -67,7 +71,7 @@ function undefinedEnvironmentVariables() {
 }
 
 const count = argv.c;
-if(count == null || 
+if(count == null ||
 	count > 50 ||
 	count <= 0) {
 	countValueFailValidation();
@@ -79,6 +83,8 @@ if(sort != 'latest' &&
 	sort != 'popular') {
 	sortValueFailValidation();
 }
+
+const keepDuplicates = argv.k;
 
 const verbose = argv.v;
 
@@ -106,6 +112,10 @@ const order_by = sort; // latest, oldest, popular (default: latest)
 var response = unsplash.photos.listCuratedPhotos(page, per_page, order_by)
 	.then(toJson)
 	.then(json => {
+		var existingImages = getFetchUnsplashImagesInDir(imageDir);
+		existingImages.forEach(function(name) {
+			console.log('Found duplicate image: ', name);
+		})
 		json.forEach(function(photo) {
 			counter++;
 			if (verbose) {
@@ -117,6 +127,7 @@ var response = unsplash.photos.listCuratedPhotos(page, per_page, order_by)
 			var now = new Date();
 			var dateStr = now.getFullYear()+'-'+now.getMonth()+'-'+now.getDate()+'_'+now.getHours()+'-'+now.getMinutes()+'-'+now.getSeconds();
 
+			// Check Directory Accessibility
 			if (!fs.existsSync(imageDir)) {
 				try {
 					fs.mkdirSync(imageDir, 0744);
@@ -126,25 +137,75 @@ var response = unsplash.photos.listCuratedPhotos(page, per_page, order_by)
 					process.exit(1);
 				}
 			}
-			
-			var fileName = dateStr+'_'+photo.id+'.jpg';
-			var fullFileName = imageDir+fileName;
-			if (verbose) { console.log("Image Full Filename: '"+fullFileName+"'"); }
-			var file = fs.createWriteStream(fullFileName);
-			file.on('error', function(err) {
-				console.log(err);
-				file.end();
-			});
-
-			var request = https.get(photo.urls.raw, 
-				function(response) {
-					response.pipe(file);
+			// Collect Existing Image IDs to Avoid Duplicates
+			if(keepDuplicates && existingImages.indexOf(photo.id) < 0) {
+				var fileName = dateStr+'_'+photo.id+'.jpg';
+				var fullFileName = imageDir+fileName;
+				if (verbose) { console.log("Image Full Filename: '"+fullFileName+"'"); }
+				var file = fs.createWriteStream(fullFileName);
+				file.on('error', function(err) {
+					console.log(err);
+					file.end();
 				});
-			request.on('error', function(err) {
-				log.console(err);
-			})
+
+				var request = https.get(photo.urls.raw,
+					function(response) {
+						response.pipe(file);
+					});
+				request.on('error', function(err) {
+					log.console(err);
+				})
+			} else {
+				console.log('Image ID #'+photo.id+' is a duplicate.');
+			}
 		});
 	})
 	.catch(err => {
 		console.log(err);
 	});
+
+// Testing this function out to avoid duplicate images
+function getFetchUnsplashImagesInDir(directory) {
+	var imageIds = [];
+	try {
+		fs.readdir(directory, function(err,files) {
+			if (err) {
+				console.error("Could not list directory.", err);
+				return;
+			}
+
+			files.forEach(function(file, index) {
+				var filename = path.join(directory, file);
+
+				fs.stat(filename, function(error, stat) {
+					if (error) {
+						console.error("Could not stat file.", error);
+						return;
+					}
+					if (stat.isFile()) {
+						console.log("'%s' is a file.", filename);
+						var split = filename.split("_");
+						if (typeof split !== 'undefined' && split && split.length > 0) {
+							var idExt = split[split.length-1];
+							if (typeof idExt !== 'undefined' && idExt) {
+								var imgIdSplit = idExt.split(".");
+								if (imgIdSplit > 0) {
+									var imgId = imgIdSplit[0];
+									console.log("Found image ID: %s", imgId);
+									if (typeof imgId !== 'undefined' && imgId) {
+										imageIds.push(imgId);
+									}
+								}
+							}
+						} else {
+							console.log("Found file with odd name (must not be fetchunsplash image): %s", filename);
+						}
+					}
+				});
+			});
+		});
+	} catch (err) {
+		console.error("Error occured while reading files...", err);
+	}
+	return imageIds;
+}
