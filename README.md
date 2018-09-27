@@ -61,4 +61,16 @@ Fair, I've included a script to help you get set up. Just register on Unsplash t
 
 # Like What You See?
 
+<<<<<<< HEAD
 I open-source as much as I can out of respect for the giants who came before me that created the tools, tutorials, faqs, and communities that I owe everything that I know to, endeavoring to pay it forward. Unfortunately everyone does not share such mentalities and in the real world I'm just a lowly developer. Any [contributions to the cause](https://dzale.net/donate) you feel are deserved, a few [kind words](mailto:david.zaletanski@gmail.com) of encouragement, or direct [feedback](https://github.com/david-zaletanski/fetchunsplash/issues) to help improve are all greatly appreciated. 
+=======
+I've always figured that most of what I do was made possible only by the countless contributions others have made on the internet, and that I owe my share in return. In an effort to pay that balance it's my desire to publish my efforts as freely available, open-source projects and provide reasonable support for them. If you agree or appreciate the work, here are a few simple ways to show it.
+
+[![Donate](https://img.shields.io/badge/Visit%20My-Site-953030.svg?logo=github&logoColor=white&longCache=true&style=for-the-badge)](https://dzale.net/)
+
+[![Donate](https://img.shields.io/badge/Send%20Your-Feedback-DD6B38.svg?logo=rss&logoColor=white&longCache=true&style=for-the-badge)](mailto:david.zaletanski@gmail.com)
+
+[![Donate](https://img.shields.io/badge/Donate%20And-Allow%20Me%20To%20Do%20More-5f9341.svg?logo=paypal&logoColor=white&longCache=true&style=for-the-badge)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FY47628LG7BUY)
+
+(OR Donate via BTC to: `1EtuXjEssjgtwWwZwSqSSwF1giA7TWM2cK` )
+>>>>>>> 346c2298ce2d22f6129bb6f964c18fbed1861187
